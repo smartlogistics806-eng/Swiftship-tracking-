@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - SwiftShip</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #f5f6fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 25px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            color: #3498db;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+        }
+        
+        .logo span {
+            color: #e74c3c;
+        }
+        
+        .login-section {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .admin-panel {
+            display: none;
+        }
+        
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-input {
+            margin-bottom: 15px;
+        }
+        
+        .form-input label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-input input, .form-input select, .form-input textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input input:focus, .form-input select:focus, .form-input textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .form-input textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        
+        .admin-submit {
+            width: 100%;
+            padding: 15px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .packages-list {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .package-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr auto;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        
+        .package-item:last-child {
+            border-bottom: none;
+        }
+        
+        .package-header {
+            font-weight: 600;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-picked {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-transit {
+            background: #cce7ff;
+            color: #004085;
+        }
+        
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .home-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .home-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .package-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .package-header {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-shipping-fast"></i>
+                <h1>Swift<span>Ship</span> Admin</h1>
+            </div>
+            <p>Package Management System</p>
+        </div>
+        
+        <div class="login-section" id="loginSection">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">Admin Login</h2>
+            <div class="input-group">
+                <label for="adminPassword">Admin Password</label>
+                <input type="password" id="adminPassword" placeholder="Enter admin password" onkeypress="handleKeyPress(event)">
+            </div>
+            <button class="btn btn-primary" onclick="login()">Login</button>
+            <p style="margin-top: 15px; color: #7f8c8d; font-size: 14px;">
+                Default password: admin123
+            </p>
+        </div>
+        
+        <div class="admin-panel" id="adminPanel">
+            <div class="form-section">
+                <h2 style="margin-bottom: 20px; color: #2c3e50;">Add New Package</h2>
+                <div class="form-row">
+                    <div class="form-input">
+                        <label for="receiverName">Receiver Name *</label>
+                        <input type="text" id="receiverName" placeholder="Enter receiver's full name">
+                    </div>
+                    <div class="form-input">
+                        <label for="senderName">Sender Name *</label>
+                        <input type="text" id="senderName" placeholder="Enter sender's name">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-input">
+                        <label for="origin">Origin *</label>
+                        <input type="text" id="origin" placeholder="City, Country">
+                    </div>
+                    <div class="form-input">
+                        <label for="destination">Destination *</label>
+                        <input type="text" id="destination" placeholder="City, Country">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-input">
+                        <label for="packageStatus">Status *</label>
+                        <select id="packageStatus">
+                            <option value="Pending">Pending - Order Received</option>
+                            <option value="Picked Up">Picked Up</option>
+                            <option value="In Transit">In Transit</option>
+                            <option value="Out for Delivery">Out for Delivery</option>
+                            <option value="Delivered">Delivered</option>
+                        </select>
+                    </div>
+                    <div class="form-input">
+                        <label for="packageWeight">Weight (kg)</label>
+                        <input type="number" id="packageWeight" placeholder="Package weight">
+                    </div>
+                </div>
+                <div class="form-input">
+                    <label for="packageDescription">Package Description</label>
+                    <textarea id="packageDescription" placeholder="Describe the package contents"></textarea>
+                </div>
+                <button class="admin-submit" onclick="addPackage()">
+                    <i class="fas fa-plus"></i> Add Package & Generate Tracking Code
+                </button>
+            </div>
+            
+            <div class="packages-list">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #2c3e50;">All Packages</h2>
+                    <button class="btn btn-primary" onclick="loadPackages()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                
+                <div class="package-item package-header">
+                    <div>Tracking Code</div>
+                    <div>Receiver / Sender</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                <div id="packagesContainer">
+                    <!-- Packages will be listed here -->
+                </div>
+            </div>
+            
+            <div class="home-link">
+                <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Public Tracking</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = "admin123";
+        
+        function login() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadPackages();
+            } else {
+                alert('Invalid password');
+            }
+        }
+        
+        function generateTrackingCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = 'SS';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+        
+        function addPackage() {
+            const receiverName = document.getElementById('receiverName').value;
+            const senderName = document.getElementById('senderName').value;
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+            const status = document.getElementById('packageStatus').value;
+            const weight = document.getElementById('packageWeight').value;
+            const description = document.getElementById('packageDescription').value;
+            
+            if (!receiverName || !senderName || !origin || !destination) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const trackingCode = generateTrackingCode();
+            const packageData = {
+                id: Date.now(),
+                trackingCode: trackingCode,
+                receiverName: receiverName,
+                senderName: senderName,
+                origin: origin,
+                destination: destination,
+                status: status,
+                weight: weight || 'Not specified',
+                description: description || 'No description',
+                createdAt: new Date().toISOString(),
+                history: generateHistory(status)
+            };
+                
+            const packages = getPackages();
+            packages.push(packageData);
+            localStorage.setItem('swiftship_packages', JSON.stringify(packages));
+            
+            // Clear form
+            document.getElementById('receiverName').value = '';
+            document.getElementById('senderName').value = '';
+            document.getElementById('origin').value = '';
+            document.getElementById('destination').value = '';
+            document.getElementById('packageWeight').value = '';
+            document.getElementById('packageDescription').value = '';
+            
+            // Show success message with tracking code
+            alert(`✅ Package added successfully!\n\n📦 Tracking Code: ${trackingCode}\n👤 Receiver: ${receiverName}\n\nShare the tracking code with the receiver to track the package.`);
+            
+            // Refresh packages list
+            loadPackages();
+        }
+        
+        function generateHistory(status) {
+            const history = [
+                { description: 'Order received and processed', date: new Date().toISOString() }
+            ];
+            
+            if (status !== 'Pending') {
+                history.push({ description: 'Package picked up from sender', date: new Date(Date.now() + 3600000).toISOString() });
+            }
+            
+            if (status === 'In Transit' || status === 'Out for Delivery' || status === 'Delivered') {
+                history.push({ description: 'Package in transit to destination', date: new Date(Date.now() + 7200000).toISOString() });
+            }
+            
+            if (status === 'Out for Delivery' || status === 'Delivered') {
+                history.push({ description: 'Package out for delivery', date: new Date(Date.now() + 10800000).toISOString() });
+            }
+            
+            if (status === 'Delivered') {
+                history.push({ description: 'Package delivered to recipient', date: new Date(Date.now() + 14400000).toISOString() });
+            }
+            
+            return history;
+        }
+        
+        function getPackages() {
+            return JSON.parse(localStorage.getItem('swiftship_packages') || '[]');
+        }
+        
+        function loadPackages() {
+            const packages = getPackages();
+            const container = document.getElementById('packagesContainer');
+            
+            if (packages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 15px; color: #bdc3c7;"></i>
+                        <h3>No packages yet</h3>
+                        <p>Add your first package using the form above</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            packages.forEach(pkg => {
+                const packageItem = document.createElement('div');
+                packageItem.className = 'package-item';
+                
+                // Get status badge class
+                let statusClass = 'status-pending';
+                if (pkg.status === 'Picked Up') statusClass = 'status-picked';
+                else if (pkg.status === 'In Transit') statusClass = 'status-transit';
+                else if (pkg.status === 'Out for Delivery') statusClass = 'status-transit';
+                else if (pkg.status === 'Delivered') statusClass = 'status-delivered';
+                
+                packageItem.innerHTML = `
+                    <div><strong>${pkg.trackingCode}</strong></div>
+                    <div>${pkg.receiverName} / ${pkg.senderName}</div>
+                    <div><span class="status-badge ${statusClass}">${pkg.status}</span></div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-primary" onclick="viewPackage('${pkg.trackingCode}')">View</button>
+                        <button class="btn btn-danger" onclick="deletePackage(${pkg.id})">Delete</button>
+                    </div>
+                `;
+                
+                container.appendChild(packageItem);
+            });
+        }
+        
+        function viewPackage(trackingCode) {
+            // Redirect to tracking page with the code
+            window.open(`index.html?tracking=${trackingCode}`, '_blank');
+        }
+        
+        function deletePackage(packageId) {
+            if (confirm('Are you sure you want to delete this package? This action cannot be undone.')) {
+                const packages = getPackages();
+                const updatedPackages = packages.filter(p => p.id !== packageId);
+                localStorage.setItem('swiftship_packages', JSON.stringify(updatedPackages));
+                loadPackages();
+                alert('Package deleted successfully');
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                login();
+            }
+        }
+        
+        // Load packages on page load if already logged in
+        window.addEventListener('load', function() {
+            // Check if we should auto-login (for demo purposes)
+            // In real app, you'd check for a session
+            loadPackages();
+        });
+
+        // Make functions available globally
+        window.getPackages = getPackages;
+    </script>
+</body>
+</html>
