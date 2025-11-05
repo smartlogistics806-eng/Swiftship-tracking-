@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftShip - Track Your Package</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .tracking-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .logo i {
+            font-size: 32px;
+            color: #3498db;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+        }
+        
+        .logo span {
+            color: #e74c3c;
+        }
+        
+        .tracking-form {
+            padding: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .track-btn {
+            width: 100%;
+            padding: 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .track-btn:hover {
+            background: #c0392b;
+        }
+        
+        .admin-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .admin-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .results {
+            display: none;
+            padding: 0 30px 30px 30px;
+        }
+        
+        .package-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .status-timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 20px;
+        }
+        
+        .status-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #3498db;
+        }
+        
+        .status-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        .status-item::before {
+            content: '';
+            position: absolute;
+            left: -23px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #3498db;
+        }
+        
+        .status-item.completed::before {
+            background: #2ecc71;
+        }
+        
+        .status-item.active::before {
+            background: #f39c12;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .status-content h4 {
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .status-content p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .help-text {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tracking-card">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h1>Swift<span>Ship</span></h1>
+                </div>
+                <p>Track your package in real-time</p>
+            </div>
+            
+            <div class="tracking-form">
+                <div class="input-group">
+                    <input type="text" id="trackingCode" placeholder="Enter tracking code (e.g., SS123456)" onkeypress="handleKeyPress(event)">
+                </div>
+                <button class="track-btn" onclick="trackPackage()">
+                    <i class="fas fa-search"></i> Track Package
+                </button>
+                
+                <div class="admin-link">
+                    <a href="admin.html">Admin Login</a>
+                </div>
+                
+                <div class="help-text">
+                    Enter the tracking code provided by your sender
+                </div>
+            </div>
+            
+            <div class="results" id="results">
+                <div class="package-info">
+                    <h3 style="margin-bottom: 15px; color: #2c3e50;">Package Details</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Tracking Code:</span>
+                            <span id="result-code">SS123456</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Status:</span>
+                            <span id="result-status" style="font-weight: bold;">In Transit</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Receiver:</span>
+                            <span id="result-receiver">John Doe</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Sender:</span>
+                            <span id="result-sender">Amazon</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">From:</span>
+                            <span id="result-origin">New York, USA</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">To:</span>
+                            <span id="result-destination">London, UK</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-bottom: 15px; color: #2c3e50;">Delivery Progress</h3>
+                <div class="status-timeline" id="statusTimeline">
+                    <!-- Timeline will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to get packages from localStorage
+        function getPackages() {
+            return JSON.parse(localStorage.getItem('swiftship_packages') || '[]');
+        }
+
+        function trackPackage() {
+            const code = document.getElementById('trackingCode').value.trim().toUpperCase();
+            const packages = getPackages();
+            const package = packages.find(p => p.trackingCode === code);
+            
+            if (package) {
+                // Update package details
+                document.getElementById('result-code').textContent = package.trackingCode;
+                document.getElementById('result-receiver').textContent = package.receiverName;
+                document.getElementById('result-sender').textContent = package.senderName;
+                document.getElementById('result-origin').textContent = package.origin;
+                document.getElementById('result-destination').textContent = package.destination;
+                
+                // Update status with color coding
+                const statusEl = document.getElementById('result-status');
+                statusEl.textContent = package.status;
+                
+                // Color code based on status
+                switch(package.status) {
+                    case 'Pending':
+                        statusEl.style.color = '#f39c12';
+                        break;
+                    case 'Picked Up':
+                        statusEl.style.color = '#3498db';
+                        break;
+                    case 'In Transit':
+                        statusEl.style.color = '#e74c3c';
+                        break;
+                    case 'Out for Delivery':
+                        statusEl.style.color = '#9b59b6';
+                        break;
+                    case 'Delivered':
+                        statusEl.style.color = '#27ae60';
+                        break;
+                    default:
+                        statusEl.style.color = '#7f8c8d';
+                }
+                
+                // Update timeline
+                updateTimeline(package);
+                
+                // Show results
+                document.getElementById('results').style.display = 'block';
+                
+                // Scroll to results
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('Tracking code not found. Please check your code and try again.\n\nIf you just added this package in admin, refresh the page and try again.');
+            }
+        }
+
+        function updateTimeline(package) {
+            const timeline = document.getElementById('statusTimeline');
+            timeline.innerHTML = '';
+            
+            const statusHistory = package.history || [];
+            
+            statusHistory.forEach((item, index) => {
+                const statusItem = document.createElement('div');
+                const isCompleted = index < statusHistory.length - 1 || package.status === 'Delivered';
+                const isActive = index === statusHistory.length - 1 && package.status !== 'Delivered';
+                
+                statusItem.className = `status-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`;
+                
+                statusItem.innerHTML = `
+                    <div class="status-content">
+                        <h4>${item.description}</h4>
+                        <p>${formatDate(item.date)}</p>
+                    </div>
+                `;
+                
+                timeline.appendChild(statusItem);
+            });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                trackPackage();
+            }
+        }
+
+        // Add sample data if no packages exist
+        window.addEventListener('load', function() {
+            const packages = getPackages();
+            if (packages.length === 0) {
+                // Add sample package for demonstration
+                const samplePackage = {
+                    trackingCode: 'SS123456',
+                    receiverName: 'Sarah Johnson',
+                    senderName: 'Amazon',
+                    origin: 'New York, USA',
+                    destination: 'London, UK',
+                    status: 'In Transit',
+                    weight: '2.5 kg',
+                    description: 'Electronics',
+                    history: [
+                        { description: 'Order received and processed', date: new Date(Date.now() - 3*24*60*60*1000).toISOString() },
+                        { description: 'Package picked up from warehouse', date: new Date(Date.now() - 2*24*60*60*1000).toISOString() },
+                        { description: 'In transit to destination', date: new Date(Date.now() - 1*24*60*60*1000).toISOString() }
+                    ]
+                };
+                
+                packages.push(samplePackage);
+                localStorage.setItem('swiftship_packages', JSON.stringify(packages));
+            }
+        });
+    </script>
+</body>
+</html>
